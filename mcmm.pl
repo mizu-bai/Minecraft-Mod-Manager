@@ -1,7 +1,5 @@
 #!/usr/bin/env perl
 
-# Document Section
-
 =pod
 
 =head1 Minecraft Mod Manager
@@ -31,36 +29,36 @@ Avaliable Commands:
 
 Install local mods (aka. .jar files)
 
- mcmm --install local_mod.jar [ another_local_mod.jar ... ]
- mcmm -i local_mod.jar [ another_local_mod.jar ... ]
+ ./mcmm.pl --install local_mod.jar [ another_local_mod.jar ... ]
+ ./mcmm.pl -i local_mod.jar [ another_local_mod.jar ... ]
 
 =item
 
 Uninstall installed mods
 
- mcmm --uninstall some_mod [ another_mod ... ]
- mcmm -ui some_mod [ another_mod ... ]
+ ./mcmm.pl --uninstall some_mod [ another_mod ... ]
+ ./mcmm.pl -ui some_mod [ another_mod ... ]
 
 =item
 
 List all installed mods
 
- mcmm --list
- mcmm -ls
+ ./mcmm.pl --list
+ ./mcmm.pl -ls
 
 =item
 
 List locally cached mods
 
- mcmm --cache
- mcmm -cc
+ ./mcmm.pl --cache
+ ./mcmm.pl -cc
 
 =item
 
 Clean up local caches
 
- mcmm --clean [ specified_mod [ another_specified_mod ... ] ]
- mcmm -cl [ specified_mod [ another_specified_mod ... ] ]
+ ./mcmm.pl --clean [ specified_mod [ another_specified_mod ... ] ]
+ ./mcmm.pl -cl [ specified_mod [ another_specified_mod ... ] ]
 
 =back
 
@@ -75,28 +73,28 @@ Avaliable Commands:
 
 Install local mods (aka. .jar files)
 
-    mcmm --install local_mod.jar [ another_local_mod.jar ... ]
-    mcmm -i local_mod.jar [ another_local_mod.jar ... ]
+    ./mcmm.pl --install local_mod.jar [ another_local_mod.jar ... ]
+    ./mcmm.pl -i local_mod.jar [ another_local_mod.jar ... ]
 
 Uninstall installed mods
 
-    mcmm --uninstall some_mod [ another_mod ... ]
-    mcmm -ui some_mod [ another_mod ... ]
+    ./mcmm.pl --uninstall some_mod [ another_mod ... ]
+    ./mcmm.pl -ui some_mod [ another_mod ... ]
 
 List all installed mods
 
-    mcmm --list
-    mcmm -ls
+    ./mcmm.pl --list
+    ./mcmm.pl -ls
 
 Clean up local caches
 
-    mcmm --clean [ specified_mod [ another_specified_mod ... ] ]
-    mcmm -cl [ specified_mod [ another_specified_mod ... ] ]
+    ./mcmm.pl --clean [ specified_mod [ another_specified_mod ... ] ]
+    ./mcmm.pl -cl [ specified_mod [ another_specified_mod ... ] ]
 
 Show help
 
-    mcmm --help
-    mcmm -help
+    ./mcmm.pl --help
+    ./mcmm.pl -help
 
 EOF
 
