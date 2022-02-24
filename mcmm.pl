@@ -10,11 +10,10 @@ Date: Feb. 24 2022
 
 =head2 Introduction
 
-Here is a Minecraft Mod Manager supports some features. For details see
-Usage section.
+Here is a Minecraft Mod Manager supports some features. For details see Usage
+section.
 
-More features will be added in the future, including mod
-download, search, etc.
+More features will be added in the future, including mod download, search, etc.
 
 
 =head2 Usage
