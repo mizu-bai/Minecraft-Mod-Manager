@@ -1,3 +1,16 @@
+# macOS
+.DS_Store
+
+# vscode
+.vscode/
+
+# perldoc tmp
+pod2htmd.tmp
+
+# local serverfile dir for test
+serverfile/
+
+# Perl
 !Build/
 .last_cover_stats
 /META.yml
