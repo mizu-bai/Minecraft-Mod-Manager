@@ -2,6 +2,10 @@
 
 # packages and features
 use Switch;
+use File::Path qw(make_path);
+use File::Copy qw(copy);
+use File::Basename;
+use File::Spec;
 
 ## Constants
 # usage information
@@ -39,6 +43,35 @@ Show help
 
 EOF
 
+
+## Output Format (no indentation here)
+# list installed mod top
+format INSTALLED_MODS_TOP =
+======================================================================
+ Index                              Mod Name
+======================================================================
+.
+
+# list installed mod content
+format INSTALLED_MODS = 
+@||||| @|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+"[$order]", $name
+.
+
+# list cached mod top
+format CACHED_MODS_TOP =
+======================================================================
+  Index                     Mod Name                       Installed
+======================================================================
+.
+
+# list cached mod content
+format CACHED_MODS =  
+@||||| @||||||||||||||||||||||||||||||||||||||||||||||||||| @||||||||
+"[$order]", $name, "[$install_flag]"
+.
+
+
 # options
 %opt_hash = (
     install   => ["--install", "-i"],
@@ -59,9 +92,47 @@ sub print_array {
     print $_ . "\n" for (@_);
 }
 
+# create directory
+sub create_dir {
+    $dir = shift;
+    print "Creating `$dir`...\n";
+    make_path $dir or die "Cannot create `$dir`, $!";
+}
+
+# check mod dir
+sub check_mod_dir {
+    if (not -e $MODS_DIR) {
+        print "No directory for mod installation.\n";
+        create_dir $MODS_DIR;
+    }
+}
+
+# check cache dir
+sub check_cache_dir {
+    if (not -e $CACHE_DIR) {
+        print "No directory for mod cache.\n";
+        create_dir $CACHE_DIR;
+    }
+}
+
 # install mods
 sub mcmm_install {
-
+    check_mod_dir;
+    check_cache_dir;
+    for (@_) {
+        if (-e) {
+            ($mod_name, $directory, $suffix) = fileparse $_;
+            $mod_install_dest = File::Spec->catfile($MODS_DIR, $mod_name);
+            $mod_cache_dest = File::Spec->catfile($CACHE_DIR, $mod_name);
+            print "Copying $mod_name to $CACHE_DIR\n";
+            copy $_, $CACHE_DIR or die "Cannot install mod $mod_name, $!";
+            print "Linking $mod_cache_dest -> $mod_cache_dest\n";
+            symlink $mod_cache_dest, $mod_install_dest or die "Cannot link mod $_, $!";
+        } else {
+            warn "No such file `$_`.\n";
+        }
+    }
+    print "Done.\n";
 }
 
 # uninstall mods
@@ -71,28 +142,18 @@ sub mcmm_uninstall {
 
 # list installed mods
 sub mcmm_list {
-    opendir (DIR, $MODS_DIR) or die "Unable to open directory `$MODS_DIR`.\n";
+    check_mod_dir;
+    opendir (DIR, $MODS_DIR);
     @mods = sort grep(/^.*\.jar$/, readdir DIR);
-    die "There is no mod installed in `$MODS_DIR`! Please add some!\n" if ($#mods == -1);
-
-## Output Format (no indentation here)
-# top
-format MODS_TOP =
-========================================================
-Index                       Mod Name
-========================================================
-.
-
-# content
-format MODS = 
-@||||| @||||||||||||||||||||||||||||||||||||||||||||||||||
-"[$order]", $name
-.
+    if ($#mods == -1) {
+        closedir DIR;
+        die "There is no mod installed in `$MODS_DIR`! Please add some!\n";
+    }
 
     # set format
     select STDOUT;
-    $^ = MODS_TOP;
-    $~ = MODS;
+    $^ = INSTALLED_MODS_TOP;
+    $~ = INSTALLED_MODS;
 
     # output
     for ($i = 0; $i <= $#mods; $i++) {
@@ -100,13 +161,36 @@ format MODS =
         $name = $mods[$i];
         write;
     }
-
     closedir DIR;
 }
 
 # list cached mods
 sub mcmm_cache {
+    check_mod_dir;
+    check_cache_dir;
+    opendir (CACHE_DIR, $CACHE_DIR);
+    @cached_mods = sort grep(/^.*\.jar/, readdir CACHE_DIR);
+    if ($#cached_mods == -1) {
+        closedir CACHE_DIR;
+        die "No local cache found.\n";
+    }
 
+    opendir (INSTALL_DIR, $MODS_DIR);
+    @installed_mods = sort grep(/^.*\.jar/, readdir INSTALL_DIR);
+
+    # set format
+    $^ = CACHED_MODS_TOP;
+    $~ = CACHED_MODS;
+
+    # output
+    for ($i = 0; $i <= $#cached_mods; $i++) {
+        $order = $i + 1;
+        $name = $cached_mods[$i];
+        $install_flag = grep(/^$name/, @installed_mods) ? "x" : " ";
+        write;
+    }
+    closedir CACHE_DIR;
+    closedir INSTALL_DIR;
 }
 
 # clean local cache
@@ -139,7 +223,6 @@ sub mcmm_exec {
             mcmm_list;
         } case ($opt_hash{cache}) {
             die "Error: --cache (-cc) option accecpts no argument!\n" if ($#_ > -1);
-            print "# should list cached mods #\n";
             mcmm_cache;
         } case ($opt_hash{clean}) {
             if ($#_ == - 1) {
@@ -159,7 +242,6 @@ sub mcmm_exec {
 ## Entry
 # run
 mcmm_exec @ARGV;
-
 
 __DATA__
 
